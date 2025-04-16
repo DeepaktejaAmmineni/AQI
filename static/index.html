@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AQI Prediction (City Day)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>City Day AQI Prediction</h1>
+    <form id="aqi-form">
+        <label>City</label><input type="number" name="City" required>
+        <label>PM2.5</label><input type="number" step="any" name="PM2_5" required>
+        <label>PM10</label><input type="number" step="any" name="PM10" required>
+        <label>NO</label><input type="number" step="any" name="NO" required>
+        <label>NO2</label><input type="number" step="any" name="NO2" required>
+        <label>NOx</label><input type="number" step="any" name="NOx" required>
+        <label>NH3</label><input type="number" step="any" name="NH3" required>
+        <label>CO</label><input type="number" step="any" name="CO" required>
+        <label>SO2</label><input type="number" step="any" name="SO2" required>
+        <label>O3</label><input type="number" step="any" name="O3" required>
+        <label>Benzene</label><input type="number" step="any" name="Benzene" required>
+        <label>Toluene</label><input type="number" step="any" name="Toluene" required>
+        <label>Xylene</label><input type="number" step="any" name="Xylene" required>
+        <label>AQI Bucket</label><input type="number" name="AQI_Bucket" required>
+        <button type="submit">Predict AQI</button>
+    </form>
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    document.getElementById("aqi-form").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => data[key] = parseFloat(value));
+
+        const response = await fetch("/predict_city_day/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        const resultDiv = document.getElementById("result");
+
+        if (result.predicted_AQI) {
+            resultDiv.innerText = `Predicted AQI: ${result.predicted_AQI}`;
+        } else {
+            resultDiv.innerText = `Error: ${result.error}`;
+            resultDiv.style.color = "#e74c3c";
+        }
+    });
+</script>
+</body>
+</html>
