@@ -1,5 +1,6 @@
 fastapi
 uvicorn
-scikit-learn==1.5.1
 numpy
+pydantic
+scikit-learn
 python-multipart
